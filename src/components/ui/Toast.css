@@ -1,0 +1,128 @@
+/* Toast container (bottom-right) */
+.toast-container {
+  position: fixed;
+  bottom: 4rem;
+  right: 1rem;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  pointer-events: none;
+}
+.toast-container .toast {
+  pointer-events: auto;
+}
+
+@keyframes toast-in {
+  from { transform: translateX(calc(100% + 2rem)) scale(0.92); opacity: 0; }
+  to { transform: translateX(0) scale(1); opacity: 1; }
+}
+@keyframes toast-out {
+  from { transform: translateX(0) scale(1); opacity: 1; }
+  to { transform: translateX(calc(100% + 2rem)) scale(0.92); opacity: 0; }
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: calc(var(--roundness, 6px) + 2px);
+  font-size: 0.75rem;
+  color: var(--base-100);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+  position: relative;
+  overflow: hidden;
+  min-width: 15rem;
+  max-width: 22rem;
+  animation: toast-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.toast-info {
+  background: linear-gradient(135deg, color-mix(in srgb, #38bdf8 25%, var(--background)), color-mix(in srgb, #38bdf8 12%, var(--background)));
+  border: 1px solid color-mix(in srgb, #38bdf8 55%, transparent);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35), 0 0 0 1px color-mix(in srgb, #38bdf8 20%, transparent), 0 0 20px color-mix(in srgb, #38bdf8 15%, transparent);
+}
+.toast-success {
+  background: linear-gradient(135deg, color-mix(in srgb, #4ade80 25%, var(--background)), color-mix(in srgb, #4ade80 12%, var(--background)));
+  border: 1px solid color-mix(in srgb, #4ade80 55%, transparent);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35), 0 0 0 1px color-mix(in srgb, #4ade80 20%, transparent), 0 0 20px color-mix(in srgb, #4ade80 15%, transparent);
+}
+.toast-error {
+  background: linear-gradient(135deg, color-mix(in srgb, #fb7185 25%, var(--background)), color-mix(in srgb, #fb7185 12%, var(--background)));
+  border: 1px solid color-mix(in srgb, #fb7185 55%, transparent);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35), 0 0 0 1px color-mix(in srgb, #fb7185 20%, transparent), 0 0 20px color-mix(in srgb, #fb7185 15%, transparent);
+}
+.toast-warning {
+  background: linear-gradient(135deg, color-mix(in srgb, #fbbf24 25%, var(--background)), color-mix(in srgb, #fbbf24 12%, var(--background)));
+  border: 1px solid color-mix(in srgb, #fbbf24 55%, transparent);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35), 0 0 0 1px color-mix(in srgb, #fbbf24 20%, transparent), 0 0 20px color-mix(in srgb, #fbbf24 15%, transparent);
+}
+.toast-tip {
+  background: linear-gradient(135deg, color-mix(in srgb, #c084fc 25%, var(--background)), color-mix(in srgb, #c084fc 12%, var(--background)));
+  border: 1px solid color-mix(in srgb, #c084fc 55%, transparent);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35), 0 0 0 1px color-mix(in srgb, #c084fc 20%, transparent), 0 0 20px color-mix(in srgb, #c084fc 15%, transparent);
+}
+
+.toast-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+.toast-icon svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+.toast-icon.info { color: #38bdf8; }
+.toast-icon.success { color: #4ade80; }
+.toast-icon.error { color: #fb7185; }
+.toast-icon.warning { color: #fbbf24; }
+.toast-icon.tip { color: #c084fc; }
+
+.toast-msg {
+  flex: 1;
+  line-height: 1.35;
+  font-weight: 500;
+}
+
+.toast-close {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  opacity: 0.4;
+  color: var(--base-100);
+  transition: opacity 0.1s, background-color 0.1s;
+  border-radius: 4px;
+  padding: 0;
+}
+.toast-close:hover {
+  opacity: 0.85;
+  background-color: color-mix(in srgb, var(--base-100) 15%, transparent);
+}
+.toast-close svg {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+@keyframes toast-progress {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+.toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2.5px;
+  border-radius: 0 0 0 calc(var(--roundness, 6px) + 2px);
+  background: color-mix(in srgb, var(--base-100) 35%, transparent);
+  animation: toast-progress 3.5s linear forwards;
+}

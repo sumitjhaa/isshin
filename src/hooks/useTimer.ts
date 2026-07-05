@@ -1,7 +1,8 @@
 'use client'
 
 import { useReducer, useEffect, useState } from 'react'
-import type { Phase, State, Action } from './types'
+import type { Phase } from '@/lib/types'
+import type { State, Action } from './types'
 
 const DEFAULT_CONFIG: Record<Phase, number> = {
   work: 25 * 60,

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback, useRef } from 'react'
-import type { WallpaperResult } from './types'
+import type { WallpaperResult } from '@/lib/types'
 
 export function useWallpaper() {
   const [searchQuery, setSearchQuery] = useState('')

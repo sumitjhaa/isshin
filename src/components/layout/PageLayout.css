@@ -1,0 +1,30 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  position: relative;
+  transition: background-color 0.3s, color 0.3s;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--background);
+  color: var(--base-100);
+}
+
+.page.has-wallpaper::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.15), 0 0 1px rgba(0,0,0,0.05);
+}

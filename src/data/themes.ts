@@ -1,5 +1,5 @@
-import { deriveSurface, deriveBorder } from "./utils";
-import type { Theme } from "./hooks/types";
+import { deriveSurface, deriveBorder } from "@/lib/color";
+import type { Theme } from "@/lib/types";
 
 const RAW = {
     "ayu-dark": { name: "Ayu Dark", bg: "#0b0e14", text: "#cecbc6", primary: "#39bae6", secondary: "#f29668", neutral: "#283040", accent: "#c2d94c" },

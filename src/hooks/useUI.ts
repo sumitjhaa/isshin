@@ -1,24 +1,16 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { hexToRgb } from '../utils'
-import type { ThemeKey } from '../data'
-import { THEMES } from '../data'
-import type { TabId } from './types'
-import FONTS from '../fonts'
-
-type FontCategory = 'timer' | 'ui' | 'mono'
-
-export interface FontOption {
-  name: string
-  value: string
-  google: string | null
-}
+import { hexToRgb } from '@/lib/color'
+import type { ThemeKey } from '@/data/themes'
+import { THEMES } from '@/data/themes'
+import type { TabId, FontCategory, FontOption } from '@/lib/types'
+import FONTS from '@/data/fonts'
 
 function buildOptions(cat: FontCategory): FontOption[] {
   if (cat === 'timer') {
     return [
-      { name: 'CaskaydiaMono Nerd Font', value: "'CaskaydiaMono Nerd Font', monospace", google: null },
+      { name: 'Caskaydia Mono Nerd Font', value: "'Caskaydia Mono Nerd Font', monospace", google: null },
       ...FONTS.filter(f => f.category === 'monospace').map(f => ({
         name: f.name,
         value: `'${f.name}', monospace`,
@@ -33,11 +25,14 @@ function buildOptions(cat: FontCategory): FontOption[] {
       google: f.google,
     }))
   }
-  return FONTS.filter(f => f.category === 'sans-serif' || f.category === 'serif').map(f => ({
-    name: f.name,
-    value: `'${f.name}', sans-serif`,
-    google: f.google,
-  }))
+  return [
+    { name: 'Inter', value: "'Inter', sans-serif", google: 'Inter' },
+    ...FONTS.filter(f => f.category === 'sans-serif' || f.category === 'serif').map(f => ({
+      name: f.name,
+      value: `'${f.name}', sans-serif`,
+      google: f.google,
+    })),
+  ]
 }
 
 const FONT_OPTIONS: Record<FontCategory, FontOption[]> = {
@@ -63,15 +58,16 @@ function loadGoogleFont(family: string, weight: number) {
   document.head.appendChild(link)
 }
 
-export type { FontCategory }
-
 export function useUI() {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<TabId>('timer')
-  const [currentTheme, setCurrentTheme] = useState<ThemeKey>('one-dark')
+  const [currentTheme, setCurrentTheme] = useState<ThemeKey>(() => {
+    if (typeof window === 'undefined') return 'catppuccin'
+    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'catppuccin-latte' : 'catppuccin'
+  })
   const [roundness, setRoundness] = useState(8)
   const [fonts, setFonts] = useState({ timer: 0, ui: 0, mono: 0 })
-  const [weights, setWeights] = useState({ timer: 400, ui: 500, mono: 400 })
+  const [weights, setWeights] = useState({ timer: 600, ui: 500, mono: 400 })
   const [fontScale, setFontScale] = useState(1)
   const [sidebarOpacity, setSidebarOpacity] = useState(0.65)
   const scrollPositions = useRef<Record<TabId, number>>({ timer: 0, theme: 0, wallpaper: 0 })
@@ -115,9 +111,9 @@ export function useUI() {
     fonts, setFont,
     weights, setWeight,
     fontScale, setFontScale,
+    sizes: computedSizes,
     sidebarOpacity, setSidebarOpacity,
     scrollPositions,
-    computedSizes,
     currentFonts,
     fontOptions: FONT_OPTIONS,
     weightOptions: WEIGHTS,
