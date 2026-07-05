@@ -4,14 +4,6 @@
   min-height: 100%;
 }
 
-/* Actions */
-.wp-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 0.375rem;
-  min-height: 0;
-}
-
 .wp-clear-btn {
   flex: none;
   display: flex;

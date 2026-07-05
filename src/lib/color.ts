@@ -7,7 +7,7 @@ export function hexToRgb(hex: string) {
     };
 }
 
-export function luminance(hex: string) {
+function luminance(hex: string) {
     const { r, g, b } = hexToRgb(hex);
     const [R, G, B] = [r, g, b].map((c) => {
         const s = c / 255;

@@ -118,31 +118,3 @@
   color: var(--base-100);
   transition: opacity 0.2s;
 }
-
-.toolbar-btn {
-  padding: 0.75rem;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.12s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 0;
-  background: none;
-  color: var(--base-100);
-  opacity: 0.6;
-}
-
-.toolbar-btn:hover {
-  opacity: 1;
-  transform: scale(1.08);
-}
-
-.toolbar-btn:active {
-  transform: scale(0.95);
-}
-
-.toolbar-btn svg {
-  width: 1.5rem;
-  height: 1.5rem;
-}

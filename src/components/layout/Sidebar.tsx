@@ -3,6 +3,7 @@ import './Sidebar.css'
 
 import { useEffect, useRef } from 'react'
 import { useMountTransition } from '@/hooks/useMountTransition'
+import { useEscapeKey } from '@/hooks/useEscapeKey'
 import { TabBar } from './TabBar'
 import type { TabId } from '@/lib/types'
 
@@ -27,6 +28,7 @@ export function Sidebar({
   const { mounted, visible } = useMountTransition(open, 200)
   const bodyRef = useRef<HTMLDivElement>(null)
   const prevTabRef = useRef(activeTab)
+  const prevVisibleRef = useRef(false)
 
   useEffect(() => {
     if (!visible || !bodyRef.current) return
@@ -36,17 +38,14 @@ export function Sidebar({
 
   useEffect(() => {
     const el = bodyRef.current
-    if (el) saveScroll(el, prevTabRef.current)
-  })
-
-  useEffect(() => {
-    if (!mounted) return
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') onClose()
+    if (!el) return
+    if (prevVisibleRef.current && !visible) {
+      saveScroll(el, prevTabRef.current)
     }
-    document.addEventListener('keydown', onKeyDown)
-    return () => document.removeEventListener('keydown', onKeyDown)
-  }, [mounted, onClose])
+    prevVisibleRef.current = visible
+  }, [visible])
+
+  useEscapeKey(onClose, mounted)
 
   if (!mounted) return null
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { Component, createElement } from 'react'
+import { Component } from 'react'
 
 interface Props {
   children: React.ReactNode

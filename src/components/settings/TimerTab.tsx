@@ -2,6 +2,7 @@
 import './TimerTab.css'
 
 import { useEffect, useState, useMemo } from 'react'
+import { useUpdateEffect } from '@/hooks/useUpdateEffect'
 import { RangeSlider } from '@/components/ui/RangeSlider'
 import { Dropdown } from '@/components/ui/Dropdown'
 import { FontPicker } from '@/components/ui/FontPicker'
@@ -25,7 +26,7 @@ export function TimerTab() {
   const { fonts, setFont, weights, setWeight, fontScale, setFontScale, roundness, setRoundness, sidebarOpacity, setSidebarOpacity, fontOptions } = useUIContext()
   const { addToast } = useToast()
 
-  useEffect(() => { saveSettings() }, [customDurations, saveSettings])
+  useUpdateEffect(() => { saveSettings() }, [customDurations, saveSettings])
 
   const [allOpen, setAllOpen] = useState(() => {
     if (typeof window === 'undefined') return false
@@ -57,14 +58,7 @@ export function TimerTab() {
 
   const totalFocus = customDurations.work * 4 + customDurations.shortBreak * 3 + customDurations.longBreak
 
-  const [shiftHeld, setShiftHeld] = useState(false)
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => { if (e.key === 'Shift') setShiftHeld(true) }
-    const up = (e: KeyboardEvent) => { if (e.key === 'Shift') setShiftHeld(false) }
-    window.addEventListener('keydown', down)
-    window.addEventListener('keyup', up)
-    return () => { window.removeEventListener('keydown', down); window.removeEventListener('keyup', up) }
-  }, [])
+  
 
   return (
     <div>

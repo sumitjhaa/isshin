@@ -50,7 +50,7 @@ export function Dropdown({ items, value, onChange, className, placeholder = 'Sel
         <span className="select-dropdown-selected">{selected?.label ?? placeholder}</span>
         <svg className="select-dropdown-arrow" width="10" height="6" viewBox="0 0 10 6"><path d="M0 0l5 6 5-6z" fill="currentColor"/></svg>
       </button>
-      {open && typeof document === 'object' && createPortal(
+      {open && createPortal(
         <div className="select-dropdown-menu" ref={menuRef} style={{ position: 'fixed', top: pos.top, left: pos.left, width: pos.width, zIndex: 200 }}>
           {search && (
             <div className="select-dropdown-search">

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { hexToRgb } from '@/lib/color'
 import type { ThemeKey } from '@/data/themes'
 import { THEMES } from '@/data/themes'
@@ -70,10 +70,9 @@ export function useUI() {
   const [weights, setWeights] = useState({ timer: 600, ui: 500, mono: 400 })
   const [fontScale, setFontScale] = useState(1)
   const [sidebarOpacity, setSidebarOpacity] = useState(0.65)
-  const scrollPositions = useRef<Record<TabId, number>>({ timer: 0, theme: 0, wallpaper: 0 })
 
   const theme = THEMES[currentTheme]
-  const sidebarRgb = hexToRgb(theme.surface)
+  const sidebarRgb = useMemo(() => hexToRgb(theme.surface), [theme.surface])
 
   const currentFonts = {
     timer: FONT_OPTIONS.timer[fonts.timer] || FONT_OPTIONS.timer[0],
@@ -102,7 +101,7 @@ export function useUI() {
     }
   }, [fonts, weights])
 
-  return {
+  return useMemo(() => ({
     settingsOpen, setSettingsOpen,
     activeTab, setActiveTab,
     currentTheme, setCurrentTheme,
@@ -113,10 +112,9 @@ export function useUI() {
     fontScale, setFontScale,
     sizes: computedSizes,
     sidebarOpacity, setSidebarOpacity,
-    scrollPositions,
     currentFonts,
     fontOptions: FONT_OPTIONS,
     weightOptions: WEIGHTS,
     weightLabels: WEIGHT_LABELS,
-  }
+  }), [settingsOpen, activeTab, currentTheme, roundness, fonts, weights, fontScale, sidebarOpacity, setFont, setWeight])
 }

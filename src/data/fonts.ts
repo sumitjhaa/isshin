@@ -1,4 +1,4 @@
-export interface FontItem {
+interface FontItem {
   name: string
   google: string
   category: 'sans-serif' | 'serif' | 'display' | 'handwriting' | 'monospace'
@@ -479,12 +479,3 @@ const FONTS: FontItem[] = [
 ]
 
 export default FONTS
-
-export const MONO_FONTS = FONTS.filter(f => f.category === 'monospace')
-export const UI_FONTS = FONTS.filter(f => f.category === 'sans-serif' || f.category === 'serif')
-
-export function searchFonts(query: string, pool: FontItem[] = FONTS): FontItem[] {
-  if (!query.trim()) return pool
-  const q = query.toLowerCase().replace(/\s+/g, '')
-  return pool.filter(f => f.name.toLowerCase().replace(/\s+/g, '').includes(q))
-}

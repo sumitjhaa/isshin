@@ -1,6 +1,6 @@
 'use client'
 
-import { useReducer, useEffect, useState } from 'react'
+import { useReducer, useEffect, useState, useCallback, useMemo } from 'react'
 import type { Phase } from '@/lib/types'
 import type { State, Action } from './types'
 
@@ -58,7 +58,7 @@ export function useTimer() {
   const mins = Math.floor(state.timeLeft / 60)
   const secs = state.timeLeft % 60
 
-  const saveSettings = () => {
+  const saveSettings = useCallback(() => {
     dispatch({
       type: 'SET_CONFIG',
       config: {
@@ -67,7 +67,8 @@ export function useTimer() {
         longBreak: customDurations.longBreak * 60,
       },
     })
-  }
+  }, [customDurations])
 
-  return { state, dispatch, toggle, mins, secs, customDurations, setCustomDurations, saveSettings }
+  return useMemo(() => ({ state, dispatch, toggle, mins, secs, customDurations, setCustomDurations, saveSettings }),
+    [state, mins, secs, customDurations, saveSettings])
 }

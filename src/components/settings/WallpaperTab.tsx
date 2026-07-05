@@ -39,23 +39,27 @@ export function WallpaperTab() {
   }, [searchError, addToast])
 
   const prevCount = useRef(0)
+  const isNewSearch = useRef(false)
   useEffect(() => {
-    if (searchResults.length && searchResults.length !== prevCount.current && !searchLoading) {
+    if (searchResults.length && searchResults.length !== prevCount.current && !searchLoading && isNewSearch.current) {
       addToast('success', `${searchResults.length} results`)
     }
+    isNewSearch.current = false
     prevCount.current = searchResults.length
   }, [searchResults, searchLoading, addToast])
 
-  const mounted = useRef(false)
-  useEffect(() => { mounted.current = true }, [])
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const isFirst = useRef(true)
   useEffect(() => {
-    if (!mounted.current) return
-    doSearch(sorting)
+    if (isFirst.current) { isFirst.current = false; return }
+    clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => doSearch(sorting), 300)
+    return () => clearTimeout(debounceRef.current)
   }, [categories, purity, sorting, doSearch])
 
   const handleSearch = () => {
+    isNewSearch.current = true
     doSearch(sorting)
-    addToast('info', `Searching for "${searchQuery || '...'}"`)
   }
 
   return (

@@ -4,6 +4,7 @@ import '@/styles/themes.css'
 import '@/styles/reset.css'
 import '@/styles/fonts.css'
 import '@/styles/animations.css'
+import '@/styles/components.css'
 import { ClientLayout } from './ClientLayout'
 
 const inter = Inter({

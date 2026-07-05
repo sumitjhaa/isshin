@@ -63,22 +63,4 @@
   animation: fade-in-up 0.18s ease-out;
 }
 
-/* Section title */
-.sidebar-section-title {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  margin-bottom: 0.75rem;
-  opacity: 0.5;
-  font-family: var(--font-ui, 'Inter', sans-serif);
-  color: var(--base-100);
-}
 
-/* Section divider */
-.sidebar-divider {
-  height: 1px;
-  background-color: var(--border);
-  margin: 1rem 0;
-  opacity: 0.5;
-}

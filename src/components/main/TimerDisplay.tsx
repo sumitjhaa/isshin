@@ -1,26 +1,26 @@
 'use client'
 import './TimerDisplay.css'
 
-import { useState } from 'react'
+import { useState, useCallback, memo } from 'react'
 import { useTimerContext } from '@/providers/AppProviders'
 import { useToast } from '@/providers/ToastProvider'
 import { ConfirmTabModal } from '@/components/ui/ConfirmTabModal'
 import { PHASES, LABELS } from '@/lib/types'
 import type { Phase } from '@/lib/types'
 
-export function TimerDisplay() {
+export const TimerDisplay = memo(function TimerDisplay() {
   const { state, dispatch, toggle, mins, secs } = useTimerContext()
   const { addToast } = useToast()
   const [pendingPhase, setPendingPhase] = useState<Phase | null>(null)
 
-  const handlePhaseClick = (p: Phase) => {
+  const handlePhaseClick = useCallback((p: Phase) => {
     if (state.running && p !== state.phase) {
       setPendingPhase(p)
     } else {
       dispatch({ type: 'SET_PHASE', phase: p })
       addToast('info', `Switched to ${LABELS[p]}`)
     }
-  }
+  }, [state.running, state.phase, dispatch, addToast])
 
   return (
     <div className="content">
@@ -65,4 +65,4 @@ export function TimerDisplay() {
       </div>
     </div>
   )
-}
+})

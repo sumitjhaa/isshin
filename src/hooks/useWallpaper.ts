@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useMemo } from 'react'
 import type { WallpaperResult } from '@/lib/types'
 
 export function useWallpaper() {
@@ -23,19 +23,19 @@ export function useWallpaper() {
   const [colors, setColors] = useState('')
   const [order, setOrder] = useState('')
 
-  const toggleCategory = (idx: number) => {
+  const toggleCategory = useCallback((idx: number) => {
     const arr = categories.split('')
     arr[idx] = arr[idx] === '1' ? '0' : '1'
     const next = arr.join('')
     if (next !== '000') setCategories(next)
-  }
+  }, [categories])
 
-  const togglePurity = (idx: number) => {
+  const togglePurity = useCallback((idx: number) => {
     const arr = purity.split('')
     arr[idx] = arr[idx] === '1' ? '0' : '1'
     const next = arr.join('')
     if (next !== '000') setPurity(next)
-  }
+  }, [purity])
 
   const buildParams = useCallback((sorting: string, pageNum: number) => {
     const params = new URLSearchParams({
@@ -138,14 +138,12 @@ export function useWallpaper() {
   const fetchWallpaper = useCallback(async () => {
     setWallpaperLoading(true)
     setWallpaperError('')
-    const q = searchQuery || 'landscape'
     const params = buildParams('random', 1)
-    params.set('q', q)
+    if (!searchQuery) params.set('q', 'landscape')
     try {
       const res = await fetch(`/api/wallhaven?${params}`)
       if (!res.ok) {
         setWallpaperError(`API error (${res.status})`)
-        setWallpaperLoading(false)
         return
       }
       const json = await res.json()
@@ -157,15 +155,14 @@ export function useWallpaper() {
         img.src = url
       } else {
         setWallpaperError('No random wallpaper found — try different filters')
-        setWallpaperLoading(false)
       }
     } catch {
       setWallpaperError('Network error fetching wallpaper')
-      setWallpaperLoading(false)
     }
+    setWallpaperLoading(false)
   }, [searchQuery, buildParams])
 
-  return {
+  return useMemo(() => ({
     searchQuery, setSearchQuery,
     categories, toggleCategory,
     purity, togglePurity,
@@ -182,5 +179,8 @@ export function useWallpaper() {
     topRange, setTopRange,
     colors, setColors,
     order, setOrder,
-  }
+  }), [searchQuery, categories, purity, searchResults, searchLoading, searchError,
+      wallpaper, wallpaperLoading, wallpaperError, hasMore,
+      atleast, ratios, topRange, colors, order,
+      toggleCategory, togglePurity, doSearch, fetchWallpaper, loadMore, clearAll])
 }

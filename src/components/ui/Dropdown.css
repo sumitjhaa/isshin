@@ -113,19 +113,3 @@
   font-size: 0.75rem;
 }
 
-/* Font preview block */
-.font-preview-block {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 0.75rem;
-  padding: 0.75rem;
-  border-radius: var(--roundness, 8px);
-  border: 1px dashed var(--border);
-  min-height: 3rem;
-  opacity: 0.5;
-}
-
-.font-preview-block span {
-  line-height: 1;
-}

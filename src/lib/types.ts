@@ -21,6 +21,12 @@ export interface Theme {
 
 export type TabId = "timer" | "theme" | "wallpaper";
 
+export function formatTime(seconds: number) {
+  const m = Math.floor(seconds / 60)
+  const s = seconds % 60
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+}
+
 export type WallpaperResult = {
     id: string;
     thumb: string;

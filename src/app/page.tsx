@@ -1,21 +1,13 @@
 'use client'
 
 import '@/components/layout/PageLayout.css'
-import { useEffect, useState, useCallback } from 'react'
-import { AppProviders, useUIContext, useWallpaperContext, useTimerContext } from '@/providers/AppProviders'
-import { useFullscreen } from '@/hooks/useFullscreen'
-import { useToast } from '@/providers/ToastProvider'
-import { GearIcon, CloseIcon, ExpandIcon, CompressIcon } from '@/components/icons'
+import { memo } from 'react'
+import { AppProviders, useUIContext, useWallpaperContext } from '@/providers/AppProviders'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
-import { ConfirmTabModal } from '@/components/ui/ConfirmTabModal'
-import { Sidebar } from '@/components/layout/Sidebar'
 import { TimerDisplay } from '@/components/main/TimerDisplay'
-import { TimerTab } from '@/components/settings/TimerTab'
-import { ThemeTab } from '@/components/settings/ThemeTab'
-import { WallpaperTab } from '@/components/settings/WallpaperTab'
-import type { TabId } from '@/lib/types'
+import { SettingsPanel } from '@/components/layout/SettingsPanel'
 
-function MainContent() {
+const MainContent = memo(function MainContent() {
   const { wallpaper } = useWallpaperContext()
 
   return (
@@ -37,92 +29,14 @@ function MainContent() {
       </ErrorBoundary>
 
       <ErrorBoundary>
-        <SettingsControls />
+        <SettingsPanel />
       </ErrorBoundary>
     </div>
   )
-}
-
-function SettingsControls() {
-  const { settingsOpen, setSettingsOpen, activeTab, setActiveTab } = useUIContext()
-  const { isFullscreen, toggleFullscreen } = useFullscreen()
-  const { state, dispatch } = useTimerContext()
-  const [pendingTab, setPendingTab] = useState<TabId | null>(null)
-
-  const handleSetActiveTab = useCallback((tab: TabId) => {
-    if (state.running && tab !== activeTab) {
-      setPendingTab(tab)
-    } else {
-      setActiveTab(tab)
-    }
-  }, [state.running, activeTab, setActiveTab])
-
-  return (
-    <>
-      {pendingTab && (
-        <ConfirmTabModal
-          timeLeft={state.timeLeft}
-          phase={state.phase}
-          onReset={() => { dispatch({ type: 'RESET' }); setActiveTab(pendingTab); setPendingTab(null) }}
-          onAccept={() => { setActiveTab(pendingTab); setPendingTab(null) }}
-          onReject={() => setPendingTab(null)}
-        />
-      )}
-      <button
-        className="toolbar-btn"
-        style={{ position: 'fixed', top: '1rem', right: '1rem', zIndex: settingsOpen ? 50 : 20 }}
-        onClick={() => setSettingsOpen(!settingsOpen)}
-        title={settingsOpen ? 'Close (Esc)' : 'Settings'}
-      >
-        {settingsOpen ? <CloseIcon /> : <GearIcon />}
-      </button>
-
-      {!settingsOpen && (
-        <button
-          className="toolbar-btn"
-          style={{ position: 'fixed', bottom: '1rem', right: '1rem', zIndex: 20 }}
-          onClick={toggleFullscreen}
-          title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
-        >
-          {isFullscreen ? <CompressIcon /> : <ExpandIcon />}
-        </button>
-      )}
-
-      <Sidebar
-        open={settingsOpen}
-        onClose={() => setSettingsOpen(false)}
-        activeTab={activeTab}
-        setActiveTab={handleSetActiveTab}
-      >
-        {activeTab === 'timer' && (
-          <ErrorBoundary>
-            <TimerTab />
-          </ErrorBoundary>
-        )}
-        {activeTab === 'theme' && (
-          <ErrorBoundary>
-            <ThemeTab />
-          </ErrorBoundary>
-        )}
-        {activeTab === 'wallpaper' && (
-          <ErrorBoundary>
-            <WallpaperTab />
-          </ErrorBoundary>
-        )}
-      </Sidebar>
-    </>
-  )
-}
+})
 
 function PageShell() {
   const { currentTheme, theme, sidebarRgb, currentFonts, weights, sizes, roundness, sidebarOpacity } = useUIContext()
-
-  useEffect(() => {
-    const root = document.documentElement
-    root.setAttribute('data-theme', currentTheme)
-    root.style.setProperty('--roundness', `${roundness}px`)
-    root.style.setProperty('--surface', theme.surface)
-  }, [currentTheme, roundness, theme.surface])
 
   return (
     <div
@@ -140,7 +54,6 @@ function PageShell() {
         '--weight-mono': String(weights.mono),
         '--size-timer': `${sizes.timer}rem`,
         '--size-ui': `${sizes.ui}rem`,
-        '--size-mono': `${sizes.mono}rem`,
       } as React.CSSProperties}
     >
       <ErrorBoundary>
