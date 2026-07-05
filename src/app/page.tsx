@@ -1,17 +1,19 @@
 'use client'
 
 import '@/components/layout/PageLayout.css'
-import { useEffect } from 'react'
-import { AppProviders, useUIContext, useWallpaperContext } from '@/providers/AppProviders'
+import { useEffect, useState, useCallback } from 'react'
+import { AppProviders, useUIContext, useWallpaperContext, useTimerContext } from '@/providers/AppProviders'
 import { useFullscreen } from '@/hooks/useFullscreen'
 import { useToast } from '@/providers/ToastProvider'
 import { GearIcon, CloseIcon, ExpandIcon, CompressIcon } from '@/components/icons'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
+import { ConfirmTabModal } from '@/components/ui/ConfirmTabModal'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { TimerDisplay } from '@/components/main/TimerDisplay'
 import { TimerTab } from '@/components/settings/TimerTab'
 import { ThemeTab } from '@/components/settings/ThemeTab'
 import { WallpaperTab } from '@/components/settings/WallpaperTab'
+import type { TabId } from '@/lib/types'
 
 function MainContent() {
   const { wallpaper } = useWallpaperContext()
@@ -44,9 +46,28 @@ function MainContent() {
 function SettingsControls() {
   const { settingsOpen, setSettingsOpen, activeTab, setActiveTab } = useUIContext()
   const { isFullscreen, toggleFullscreen } = useFullscreen()
+  const { state, dispatch } = useTimerContext()
+  const [pendingTab, setPendingTab] = useState<TabId | null>(null)
+
+  const handleSetActiveTab = useCallback((tab: TabId) => {
+    if (state.running && tab !== activeTab) {
+      setPendingTab(tab)
+    } else {
+      setActiveTab(tab)
+    }
+  }, [state.running, activeTab, setActiveTab])
 
   return (
     <>
+      {pendingTab && (
+        <ConfirmTabModal
+          timeLeft={state.timeLeft}
+          phase={state.phase}
+          onReset={() => { dispatch({ type: 'RESET' }); setActiveTab(pendingTab); setPendingTab(null) }}
+          onAccept={() => { setActiveTab(pendingTab); setPendingTab(null) }}
+          onReject={() => setPendingTab(null)}
+        />
+      )}
       <button
         className="toolbar-btn"
         style={{ position: 'fixed', top: '1rem', right: '1rem', zIndex: settingsOpen ? 50 : 20 }}
@@ -71,7 +92,7 @@ function SettingsControls() {
         open={settingsOpen}
         onClose={() => setSettingsOpen(false)}
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={handleSetActiveTab}
       >
         {activeTab === 'timer' && (
           <ErrorBoundary>

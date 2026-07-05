@@ -9,7 +9,7 @@ export function useWallpaper() {
   const [purity, setPurity] = useState('100')
   const [searchResults, setSearchResults] = useState<WallpaperResult[]>([])
   const [searchLoading, setSearchLoading] = useState(false)
-  const [wallpaper, setWallpaper] = useState('')
+  const [wallpaper, setWallpaper] = useState('https://w.wallhaven.cc/full/g7/wallhaven-g7jgk3.jpg')
   const [wallpaperLoading, setWallpaperLoading] = useState(false)
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)

@@ -52,6 +52,7 @@ export function TimerTab() {
 
   const applyPreset = (p: typeof PRESETS[0]) => {
     setCustomDurations({ work: p.work, shortBreak: p.shortBreak, longBreak: p.longBreak })
+    addToast('info', `Applied "${p.label}" preset`)
   }
 
   const totalFocus = customDurations.work * 4 + customDurations.shortBreak * 3 + customDurations.longBreak
@@ -80,11 +81,11 @@ export function TimerTab() {
             <FontPicker
               options={fontOptions[cat]}
               value={fonts[cat]}
-              onChange={(idx) => setFont(cat, idx)}
+              onChange={(idx) => { setFont(cat, idx); addToast('info', `${fontOptions[cat][idx].name}`) }}
             />
             <Dropdown
               value={String(weights[cat])}
-              onChange={v => { setWeight(cat, Number(v)); addToast('info', `${v}`) }}
+              onChange={v => { setWeight(cat, Number(v)); addToast('info', `Weight: ${v}`) }}
               items={WEIGHT_OPTIONS.map(w => ({ value: String(w), label: String(w) }))}
               className="weight-select"
             />

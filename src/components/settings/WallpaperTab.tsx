@@ -30,6 +30,22 @@ export function WallpaperTab() {
     addToast('success', 'Wallpaper set')
   }
 
+  const prevError = useRef(searchError)
+  useEffect(() => {
+    if (searchError && searchError !== prevError.current) {
+      addToast('error', searchError)
+    }
+    prevError.current = searchError
+  }, [searchError, addToast])
+
+  const prevCount = useRef(0)
+  useEffect(() => {
+    if (searchResults.length && searchResults.length !== prevCount.current && !searchLoading) {
+      addToast('success', `${searchResults.length} results`)
+    }
+    prevCount.current = searchResults.length
+  }, [searchResults, searchLoading, addToast])
+
   const mounted = useRef(false)
   useEffect(() => { mounted.current = true }, [])
   useEffect(() => {
@@ -37,12 +53,15 @@ export function WallpaperTab() {
     doSearch(sorting)
   }, [categories, purity, sorting, doSearch])
 
-  const handleSearch = () => doSearch(sorting)
+  const handleSearch = () => {
+    doSearch(sorting)
+    addToast('info', `Searching for "${searchQuery || '...'}"`)
+  }
 
   return (
     <div className="wallpaper-body">
       <div className="wp-search-row">
-        <button className="wp-random-btn" onClick={fetchWallpaper} disabled={wallpaperLoading}>
+        <button className="wp-random-btn" onClick={() => { fetchWallpaper(); addToast('info', 'Fetching random wallpaper…') }} disabled={wallpaperLoading}>
           <DiceIcon />
           {wallpaperLoading ? 'Loading...' : 'Random'}
         </button>

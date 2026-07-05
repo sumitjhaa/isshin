@@ -28,6 +28,7 @@
   gap: 0.5rem;
   padding: 0.625rem 0.75rem;
   border-radius: calc(var(--roundness, 6px) + 2px);
+  border: none;
   font-size: 0.75rem;
   color: var(--base-100);
   backdrop-filter: blur(16px);
@@ -43,28 +44,23 @@
 
 .toast-info {
   background: linear-gradient(135deg, color-mix(in srgb, #38bdf8 25%, var(--background)), color-mix(in srgb, #38bdf8 12%, var(--background)));
-  border: 1px solid color-mix(in srgb, #38bdf8 55%, transparent);
-  box-shadow: 0 6px 24px rgba(0,0,0,0.35), 0 0 0 1px color-mix(in srgb, #38bdf8 20%, transparent), 0 0 20px color-mix(in srgb, #38bdf8 15%, transparent);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35);
 }
 .toast-success {
   background: linear-gradient(135deg, color-mix(in srgb, #4ade80 25%, var(--background)), color-mix(in srgb, #4ade80 12%, var(--background)));
-  border: 1px solid color-mix(in srgb, #4ade80 55%, transparent);
-  box-shadow: 0 6px 24px rgba(0,0,0,0.35), 0 0 0 1px color-mix(in srgb, #4ade80 20%, transparent), 0 0 20px color-mix(in srgb, #4ade80 15%, transparent);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35);
 }
 .toast-error {
   background: linear-gradient(135deg, color-mix(in srgb, #fb7185 25%, var(--background)), color-mix(in srgb, #fb7185 12%, var(--background)));
-  border: 1px solid color-mix(in srgb, #fb7185 55%, transparent);
-  box-shadow: 0 6px 24px rgba(0,0,0,0.35), 0 0 0 1px color-mix(in srgb, #fb7185 20%, transparent), 0 0 20px color-mix(in srgb, #fb7185 15%, transparent);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35);
 }
 .toast-warning {
   background: linear-gradient(135deg, color-mix(in srgb, #fbbf24 25%, var(--background)), color-mix(in srgb, #fbbf24 12%, var(--background)));
-  border: 1px solid color-mix(in srgb, #fbbf24 55%, transparent);
-  box-shadow: 0 6px 24px rgba(0,0,0,0.35), 0 0 0 1px color-mix(in srgb, #fbbf24 20%, transparent), 0 0 20px color-mix(in srgb, #fbbf24 15%, transparent);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35);
 }
 .toast-tip {
   background: linear-gradient(135deg, color-mix(in srgb, #c084fc 25%, var(--background)), color-mix(in srgb, #c084fc 12%, var(--background)));
-  border: 1px solid color-mix(in srgb, #c084fc 55%, transparent);
-  box-shadow: 0 6px 24px rgba(0,0,0,0.35), 0 0 0 1px color-mix(in srgb, #c084fc 20%, transparent), 0 0 20px color-mix(in srgb, #c084fc 15%, transparent);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35);
 }
 
 .toast-icon {
@@ -73,8 +69,8 @@
   align-items: center;
 }
 .toast-icon svg {
-  width: 1.125rem;
-  height: 1.125rem;
+  width: 1.375rem;
+  height: 1.375rem;
 }
 .toast-icon.info { color: #38bdf8; }
 .toast-icon.success { color: #4ade80; }
