@@ -120,6 +120,21 @@ export function useWallpaper() {
     setSearchLoading(false)
   }, [searchLoading, hasMore, page, buildParams])
 
+  const clearAll = useCallback(() => {
+    setWallpaper('')
+    setSearchQuery('')
+    setSearchResults([])
+    setSearchError('')
+    setAtleast('')
+    setRatios('')
+    setTopRange('')
+    setColors('')
+    setOrder('')
+    setCategories('111')
+    setPurity('100')
+    setHasMore(false)
+  }, [])
+
   const fetchWallpaper = useCallback(async () => {
     setWallpaperLoading(true)
     setWallpaperError('')
@@ -160,6 +175,7 @@ export function useWallpaper() {
     wallpaper, setWallpaper,
     wallpaperLoading, fetchWallpaper,
     wallpaperError,
+    clearAll,
     loadMore, hasMore,
     atleast, setAtleast,
     ratios, setRatios,

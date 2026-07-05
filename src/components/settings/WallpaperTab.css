@@ -12,28 +12,26 @@
   min-height: 0;
 }
 
-.wp-remove-btn {
-  width: 2.5rem;
-  min-width: 2.5rem;
+.wp-clear-btn {
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--roundness, 8px);
-  border: 1px solid var(--border);
+  border: none;
   cursor: pointer;
-  background: color-mix(in srgb, var(--surface) 60%, transparent);
+  background: none;
   color: var(--base-100);
-  transition: background-color 0.15s, transform 0.1s, border-color 0.15s;
+  padding: 0.25rem;
+  border-radius: var(--roundness, 8px);
+  transition: background-color 0.15s, color 0.15s;
 }
 
-.wp-remove-btn:hover {
-  background: color-mix(in srgb, #ff5050 20%, transparent);
-  border-color: #ff5050;
-  transform: scale(1.08);
+.wp-clear-btn:hover {
+  background-color: color-mix(in srgb, var(--danger, #ff5050) 20%, transparent);
+  color: var(--danger, #ff5050);
 }
 
-.wp-remove-btn:active { transform: scale(0.95); }
-.wp-remove-btn svg { width: 1rem; height: 1rem; }
+.wp-clear-btn svg { width: 0.875rem; height: 0.875rem; display: block; }
 
 /* Search */
 .wp-search-row {
@@ -46,21 +44,23 @@
   display: flex;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: var(--roundness, 6px);
-  font-size: 0.8125rem;
-  border: 1px solid var(--primary);
+  padding: 0.375rem 1rem;
+  border-radius: var(--roundness, 9999px);
+  font-size: var(--size-ui, 0.875rem);
+  border: 1px solid var(--border);
   cursor: pointer;
   font-family: var(--font-ui, 'Inter', sans-serif);
   font-weight: var(--weight-ui, 500);
-  background: color-mix(in srgb, var(--primary) 18%, transparent);
-  color: var(--primary);
-  transition: background-color 0.15s, transform 0.1s;
+  background-color: color-mix(in srgb, var(--surface) 75%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--base-100);
+  transition: background-color 0.18s, transform 0.12s, border-color 0.18s;
   white-space: nowrap;
 }
 
 .wp-random-btn:hover {
-  background: color-mix(in srgb, var(--primary) 30%, transparent);
+  background-color: color-mix(in srgb, var(--surface) 85%, transparent);
   transform: translateY(-1px);
 }
 
@@ -294,12 +294,16 @@
 /* Load more */
 .wp-load-more {
   grid-column: 1 / -1;
-  width: 100%;
-  padding: 0.4rem;
+  justify-self: center;
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1.2rem;
   border-radius: var(--roundness, 6px);
   border: 1px solid var(--border);
   cursor: pointer;
-  font-size: 0.7rem;
+  font-size: 0.8125rem;
   font-family: var(--font-ui, 'Inter', sans-serif);
   font-weight: var(--weight-ui, 500);
   background: color-mix(in srgb, var(--surface) 60%, transparent);
@@ -316,6 +320,12 @@
 
 .wp-load-more:active { transform: translateY(0); }
 .wp-load-more:disabled { opacity: 0.3; cursor: default; transform: none; }
+
+.wp-load-more { margin-top: 1em; }
+.wp-load-more svg {
+  width: 1rem;
+  height: 1rem;
+}
 
 /* Error */
 .wallpaper-error {

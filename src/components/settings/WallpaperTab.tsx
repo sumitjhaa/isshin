@@ -2,7 +2,7 @@
 import './WallpaperTab.css'
 
 import { useEffect, useRef, useState } from 'react'
-import { ShimmerIcon, TrashIcon, SearchIcon, InfoIcon, WarningIcon, ErrorIcon } from '@/components/icons'
+import { DiceIcon, TrashIcon, SearchIcon, InfoIcon, WarningIcon, ErrorIcon, ChevronDownIcon } from '@/components/icons'
 import { Dropdown } from '@/components/ui/Dropdown'
 import { ColorPicker } from '@/components/ui/ColorPicker'
 import { useWallpaperContext } from '@/providers/AppProviders'
@@ -15,7 +15,7 @@ export function WallpaperTab() {
     searchQuery, setSearchQuery, doSearch, searchLoading,
     searchError,
     categories, toggleCategory, purity, togglePurity, searchResults,
-    loadMore, hasMore,
+    clearAll, loadMore, hasMore,
     atleast, setAtleast,
     ratios, setRatios,
     topRange, setTopRange,
@@ -23,7 +23,6 @@ export function WallpaperTab() {
     order, setOrder,
   } = useWallpaperContext()
   const { addToast } = useToast()
-  const sentinelRef = useRef<HTMLDivElement>(null)
   const [sorting, setSorting] = useState('relevance')
 
   const handleSetWallpaper = (url: string) => {
@@ -31,36 +30,20 @@ export function WallpaperTab() {
     addToast('success', 'Wallpaper set')
   }
 
+  const mounted = useRef(false)
+  useEffect(() => { mounted.current = true }, [])
   useEffect(() => {
-    const el = sentinelRef.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore && !searchLoading) {
-          loadMore()
-        }
-      },
-      { rootMargin: '200px' }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [hasMore, searchLoading, loadMore])
+    if (!mounted.current) return
+    doSearch(sorting)
+  }, [categories, purity, sorting, doSearch])
 
   const handleSearch = () => doSearch(sorting)
 
   return (
     <div className="wallpaper-body">
-      {wallpaper && (
-        <div className="wp-actions">
-          <button className="wp-remove-btn" onClick={() => { setWallpaper(''); addToast('info', 'Wallpaper removed') }}>
-            <TrashIcon />
-          </button>
-        </div>
-      )}
-
       <div className="wp-search-row">
         <button className="wp-random-btn" onClick={fetchWallpaper} disabled={wallpaperLoading}>
-          <ShimmerIcon />
+          <DiceIcon />
           {wallpaperLoading ? 'Loading...' : 'Random'}
         </button>
         <div className="wp-search-wrap">
@@ -117,6 +100,11 @@ export function WallpaperTab() {
         <Dropdown value={order} onChange={setOrder} items={ORDER_OPTIONS} className="wp-filter-select" placeholder="Order" />
         <Dropdown value={topRange} onChange={setTopRange} items={TOP_RANGES} className="wp-filter-select" placeholder="Top range" />
         <ColorPicker value={colors} onChange={setColors} />
+        {wallpaper && (
+          <button className="wp-clear-btn" onClick={() => { clearAll(); addToast('info', 'Cleared') }} title="Clear all">
+            <TrashIcon />
+          </button>
+        )}
       </div>
 
       {searchResults.length > 0 ? (
@@ -139,11 +127,11 @@ export function WallpaperTab() {
             ))}
             {hasMore && (
               <button className="wp-load-more" onClick={loadMore} disabled={searchLoading}>
+                <ChevronDownIcon />
                 {searchLoading ? 'Loading…' : 'Load more'}
               </button>
             )}
-            <div ref={sentinelRef} style={{ height: 1 }} />
-          </div>
+            </div>
           {searchError && <div className="wallpaper-error">{searchError}</div>}
         </div>
       ) : searchLoading ? (
