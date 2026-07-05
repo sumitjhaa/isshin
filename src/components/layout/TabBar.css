@@ -1,7 +1,7 @@
 .tab-bar {
   display: flex;
   gap: 0.25rem;
-  margin: 0 1.75rem 1.25rem;
+  margin: 0 1.75rem 0.5rem;
   border-radius: var(--roundness, 8px);
   padding: 0.25rem;
   background-color: color-mix(in srgb, var(--surface) 70%, transparent);

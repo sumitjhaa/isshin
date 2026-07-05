@@ -2,12 +2,12 @@
 import './WallpaperTab.css'
 
 import { useEffect, useRef, useState } from 'react'
-import { ShimmerIcon, TrashIcon, SearchIcon } from '@/components/icons'
-import { RangeSlider } from '@/components/ui/RangeSlider'
+import { ShimmerIcon, TrashIcon, SearchIcon, InfoIcon, WarningIcon, ErrorIcon } from '@/components/icons'
 import { Dropdown } from '@/components/ui/Dropdown'
-import { useMountTransition } from '@/hooks/useMountTransition'
+import { ColorPicker } from '@/components/ui/ColorPicker'
 import { useWallpaperContext } from '@/providers/AppProviders'
 import { useToast } from '@/providers/ToastProvider'
+import { RESOLUTIONS, RATIOS, TOP_RANGES, ORDER_OPTIONS } from '@/data/wallhaven'
 
 export function WallpaperTab() {
   const {
@@ -16,11 +16,15 @@ export function WallpaperTab() {
     searchError,
     categories, toggleCategory, purity, togglePurity, searchResults,
     loadMore, hasMore,
+    atleast, setAtleast,
+    ratios, setRatios,
+    topRange, setTopRange,
+    colors, setColors,
+    order, setOrder,
   } = useWallpaperContext()
   const { addToast } = useToast()
   const sentinelRef = useRef<HTMLDivElement>(null)
   const [sorting, setSorting] = useState('relevance')
-  const [loadThreshold, setLoadThreshold] = useState(200)
 
   const handleSetWallpaper = (url: string) => {
     setWallpaper(url)
@@ -36,36 +40,41 @@ export function WallpaperTab() {
           loadMore()
         }
       },
-      { rootMargin: `${loadThreshold}px` }
+      { rootMargin: '200px' }
     )
     observer.observe(el)
     return () => observer.disconnect()
-  }, [hasMore, searchLoading, loadMore, loadThreshold])
+  }, [hasMore, searchLoading, loadMore])
 
   const handleSearch = () => doSearch(sorting)
 
   return (
     <div className="wallpaper-body">
-      <div className="wallpaper-actions-bar">
-        <button
-          className="wallpaper-btn"
-          onClick={fetchWallpaper}
-          disabled={wallpaperLoading}
-        >
+      {wallpaper && (
+        <div className="wp-actions">
+          <button className="wp-remove-btn" onClick={() => { setWallpaper(''); addToast('info', 'Wallpaper removed') }}>
+            <TrashIcon />
+          </button>
+        </div>
+      )}
+
+      <div className="wp-search-row">
+        <button className="wp-random-btn" onClick={fetchWallpaper} disabled={wallpaperLoading}>
           <ShimmerIcon />
           {wallpaperLoading ? 'Loading...' : 'Random'}
         </button>
-        <RemoveWallpaperBtn visible={!!wallpaper} onRemove={() => { setWallpaper(''); addToast('info', 'Wallpaper removed') }} />
-      </div>
-
-      <div className="search-row">
-        <input
-          className="search-input"
-          placeholder="Search wallpapers..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-        />
+        <div className="wp-search-wrap">
+          <input
+            className="wp-search-input"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+          />
+          <button className="wp-search-inner-btn" onClick={handleSearch} disabled={searchLoading} title="Search">
+            <SearchIcon />
+          </button>
+        </div>
         <Dropdown
           value={sorting}
           onChange={setSorting}
@@ -77,36 +86,24 @@ export function WallpaperTab() {
             { value: 'favorites', label: 'Top faved' },
             { value: 'toplist', label: 'Top list' },
           ]}
-          className="sorting-select"
+          className="wp-sort-select"
         />
-        <button
-          className="search-btn"
-          onClick={handleSearch}
-          disabled={searchLoading}
-        >
-          <SearchIcon />
-        </button>
       </div>
 
-      <div className="sidebar-section-title" style={{ marginBottom: '0.5rem' }}>Categories</div>
-      <div className="cat-toggles">
+      <div className="wp-toggles-grid">
         {['General', 'Anime', 'People'].map((label, i) => (
           <button
             key={label}
-            className={`cat-toggle${categories[i] === '1' ? ' on' : ' off'}`}
+            className={`wp-toggle${categories[i] === '1' ? ' on' : ' off'}`}
             onClick={() => toggleCategory(i)}
           >
             {label}
           </button>
         ))}
-      </div>
-
-      <div className="sidebar-section-title" style={{ marginBottom: '0.5rem' }}>Purity</div>
-      <div className="purity-toggles">
         {['SFW', 'Sketchy', 'NSFW'].map((label, i) => (
           <button
             key={label}
-            className={`purity-toggle${purity[i] === '1' ? ' on' : ' off'}`}
+            className={`wp-toggle wp-toggle-sm${purity[i] === '1' ? ' on' : ' off'}`}
             onClick={() => togglePurity(i)}
           >
             {label}
@@ -114,83 +111,62 @@ export function WallpaperTab() {
         ))}
       </div>
 
-      <div className="sidebar-section-title" style={{ marginBottom: '0.5rem', marginTop: '0.25rem' }}>
-        Auto-load threshold
-        <span className="threshold-value">{loadThreshold}px</span>
+      <div className="wp-filters-row">
+        <Dropdown value={atleast} onChange={setAtleast} items={RESOLUTIONS} className="wp-filter-select" placeholder="Resolution" />
+        <Dropdown value={ratios} onChange={setRatios} items={RATIOS} className="wp-filter-select" placeholder="Ratio" />
+        <Dropdown value={order} onChange={setOrder} items={ORDER_OPTIONS} className="wp-filter-select" placeholder="Order" />
+        <Dropdown value={topRange} onChange={setTopRange} items={TOP_RANGES} className="wp-filter-select" placeholder="Top range" />
+        <ColorPicker value={colors} onChange={setColors} />
       </div>
-      <RangeSlider
-        value={loadThreshold} onChange={setLoadThreshold}
-        min={100} max={800} step={50}
-      />
 
-      <div className="sidebar-divider" />
-
-      {searchError && <div className="wallpaper-error">{searchError}</div>}
-
-      {searchResults.length > 0 && (
+      {searchResults.length > 0 ? (
         <div>
-          <div className="result-count">{searchResults.length} results</div>
-          <div className="results-grid">
+          <div className="wp-result-count">{searchResults.length} results</div>
+          <div className="wp-results-grid">
             {searchResults.map((r, i) => (
               <div
                 key={r.id}
-                className={`result-thumb${r.full === wallpaper ? ' selected' : ''}`}
+                className={`wp-result-thumb${r.full === wallpaper ? ' selected' : ''}`}
                 style={{ backgroundImage: `url(${r.thumb})`, '--i': i } as React.CSSProperties}
                 onClick={() => handleSetWallpaper(r.full)}
                 title="Set as wallpaper"
               >
-                <span className="result-source">wallhaven</span>
+                <span className="wp-result-source">wallhaven</span>
               </div>
             ))}
-            {searchLoading && (
-              <>
-                {[1, 2, 3, 4].map(i => (
-                  <div key={`skeleton-${i}`} className="result-thumb result-skeleton" style={{ '--i': i } as React.CSSProperties} />
-                ))}
-              </>
-            )}
+            {searchLoading && [1, 2, 3, 4].map(i => (
+              <div key={`skeleton-${i}`} className="wp-result-thumb wp-skeleton" style={{ '--i': i } as React.CSSProperties} />
+            ))}
             {hasMore && (
-              <button
-                className="load-more-btn"
-                onClick={loadMore}
-                disabled={searchLoading}
-              >
+              <button className="wp-load-more" onClick={loadMore} disabled={searchLoading}>
                 {searchLoading ? 'Loading…' : 'Load more'}
               </button>
             )}
             <div ref={sentinelRef} style={{ height: 1 }} />
           </div>
+          {searchError && <div className="wallpaper-error">{searchError}</div>}
         </div>
-      )}
-      {searchResults.length === 0 && searchLoading && (
-        <div className="results-grid">
+      ) : searchLoading ? (
+        <div className="wp-results-grid">
           {[1, 2, 3, 4].map(i => (
-            <div key={`skeleton-init-${i}`} className="result-thumb result-skeleton" style={{ '--i': i } as React.CSSProperties} />
+            <div key={`skeleton-init-${i}`} className="wp-result-thumb wp-skeleton" style={{ '--i': i } as React.CSSProperties} />
           ))}
         </div>
-      )}
-      {searchResults.length === 0 && !searchLoading && !searchError && (
-        <div className="results-empty">
-          <SearchIcon />
-          <span>Search for wallpapers above</span>
+      ) : (
+        <div className="wp-empty">
+          {searchError ? (
+            <>
+              {searchError.includes('No results') ? <InfoIcon /> : searchError.includes('API error') ? <WarningIcon /> : <ErrorIcon />}
+              <span>{searchError}</span>
+            </>
+          ) : (
+            <>
+              <SearchIcon />
+              <span>Search for wallpapers above</span>
+            </>
+          )}
         </div>
       )}
     </div>
-  )
-}
-
-function RemoveWallpaperBtn({ visible, onRemove }: { visible: boolean; onRemove: () => void }) {
-  const { mounted, visible: animVisible } = useMountTransition(visible, 150)
-
-  if (!mounted) return null
-
-  return (
-    <button
-      className={`remove-thumb-btn${animVisible ? ' entering' : ''}`}
-      onClick={onRemove}
-      title="Remove wallpaper"
-    >
-      <TrashIcon />
-    </button>
   )
 }

@@ -10,7 +10,7 @@
   flex: 1;
   padding: 0.5rem 0.625rem;
   border-radius: var(--roundness, 8px);
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   border: 1px solid var(--border);
   outline: none;
   font-family: var(--font-ui, 'Inter', sans-serif);

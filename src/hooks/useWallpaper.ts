@@ -17,6 +17,12 @@ export function useWallpaper() {
   const [wallpaperError, setWallpaperError] = useState('')
   const lastSorting = useRef('relevance')
 
+  const [atleast, setAtleast] = useState('')
+  const [ratios, setRatios] = useState('')
+  const [topRange, setTopRange] = useState('')
+  const [colors, setColors] = useState('')
+  const [order, setOrder] = useState('')
+
   const toggleCategory = (idx: number) => {
     const arr = categories.split('')
     arr[idx] = arr[idx] === '1' ? '0' : '1'
@@ -31,13 +37,26 @@ export function useWallpaper() {
     if (next !== '000') setPurity(next)
   }
 
+  const buildParams = useCallback((sorting: string, pageNum: number) => {
+    const params = new URLSearchParams({
+      q: searchQuery, categories, purity,
+      sorting, page: String(pageNum),
+    })
+    if (atleast) params.set('atleast', atleast)
+    if (ratios) params.set('ratios', ratios)
+    if (topRange) params.set('topRange', topRange)
+    if (colors) params.set('colors', colors)
+    if (order) params.set('order', order)
+    return params
+  }, [searchQuery, categories, purity, atleast, ratios, topRange, colors, order])
+
   const doSearch = useCallback(async (sorting = 'relevance') => {
     lastSorting.current = sorting
     setSearchLoading(true)
     setSearchError('')
     setPage(1)
     try {
-      const params = new URLSearchParams({ q: searchQuery, categories, purity, sorting, page: '1' })
+      const params = buildParams(sorting, 1)
       const res = await fetch(`/api/wallhaven?${params}`)
       if (!res.ok) {
         setSearchError(`API error (${res.status}) — try again later`)
@@ -67,7 +86,7 @@ export function useWallpaper() {
       setHasMore(false)
     }
     setSearchLoading(false)
-  }, [searchQuery, categories, purity])
+  }, [buildParams])
 
   const loadMore = useCallback(async () => {
     if (searchLoading || !hasMore) return
@@ -75,7 +94,7 @@ export function useWallpaper() {
     setSearchError('')
     const nextPage = page + 1
     try {
-      const params = new URLSearchParams({ q: searchQuery, categories, purity, sorting: lastSorting.current, page: String(nextPage) })
+      const params = buildParams(lastSorting.current, nextPage)
       const res = await fetch(`/api/wallhaven?${params}`)
       if (!res.ok) {
         setSearchError(`API error (${res.status})`)
@@ -99,13 +118,14 @@ export function useWallpaper() {
       setSearchError('Network error loading more')
     }
     setSearchLoading(false)
-  }, [searchLoading, hasMore, page, searchQuery, categories, purity])
+  }, [searchLoading, hasMore, page, buildParams])
 
   const fetchWallpaper = useCallback(async () => {
     setWallpaperLoading(true)
     setWallpaperError('')
     const q = searchQuery || 'landscape'
-    const params = new URLSearchParams({ q, categories, purity, sorting: 'random', page: '1' })
+    const params = buildParams('random', 1)
+    params.set('q', q)
     try {
       const res = await fetch(`/api/wallhaven?${params}`)
       if (!res.ok) {
@@ -128,7 +148,7 @@ export function useWallpaper() {
       setWallpaperError('Network error fetching wallpaper')
       setWallpaperLoading(false)
     }
-  }, [searchQuery, categories, purity])
+  }, [searchQuery, buildParams])
 
   return {
     searchQuery, setSearchQuery,
@@ -141,5 +161,10 @@ export function useWallpaper() {
     wallpaperLoading, fetchWallpaper,
     wallpaperError,
     loadMore, hasMore,
+    atleast, setAtleast,
+    ratios, setRatios,
+    topRange, setTopRange,
+    colors, setColors,
+    order, setOrder,
   }
 }
